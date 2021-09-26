@@ -51,7 +51,11 @@ def create_room(user_to_invite):
     r = requests.post(url=url, headers=headers, json=data)
     print(data, flush=True)
     print(json.loads(r.text), flush=True)
-    return json.loads(r.text)["room_id"]
+    try:
+        return json.loads(r.text)["room_id"]
+    except KeyError:
+        print(json.loads(r.text))
+        return None
 
 
 def join_via_invite(room_id, token):
@@ -68,7 +72,11 @@ def join_via_invite(room_id, token):
 if __name__ == '__main__':
     all_users = get_users()
     for u in all_users:
-        join_via_invite(
-            room_id=create_room(u),
-            token=GetUserToken(u).token
-        )
+        room_id = create_room(u)
+        if room_id is not None:
+            join_via_invite(
+                room_id=room_id,
+                token=GetUserToken(u).token
+            )
+        else:
+            print(room_id)
