@@ -1,0 +1,10 @@
+{
+  "api_key": "",
+  "ai_id": "AI",
+  "bot_id": "",
+  "bot_password": "",
+  "database_name": "synapse",
+  "database_user": "synapse_user",
+  "database_host": "",
+  "database_password": ""
+}

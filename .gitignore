@@ -1,0 +1,4 @@
+venv/
+__pycache__/
+.idea/
+ai_bot_config_data.rtf
