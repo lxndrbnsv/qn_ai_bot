@@ -1,3 +1,4 @@
+import sys
 import json
 
 import psycopg2
@@ -5,6 +6,10 @@ import requests
 
 from modules.utils import Config as cfg
 from modules.user_data import GetUserToken
+
+
+sys.stdout = open("./add_bot.log", "w")
+sys.stderr = open("./add_bot.log", "w")
 
 
 def get_users():
@@ -44,7 +49,7 @@ def create_room(user_to_invite):
         "Authorization": "Bearer " + GetUserToken(cfg().bot_id).token
     }
     data = {
-        # "preset": "trusted_private_chat",
+        "preset": "trusted_private_chat",
         "invite": [user_to_invite],
         "is_direct": True
     }
@@ -58,10 +63,10 @@ def create_room(user_to_invite):
         return None
 
 
-def join_via_invite(room_id, token):
+def join_via_invite(room, token):
     url = (
         f"https://test.matrix.mybusines.app/_matrix/client/r0/"
-        f"rooms/{room_id}/join?access_token={token}"
+        f"rooms/{room}/join?access_token={token}"
     )
     headers = {"headers": "Content-type: application/json"}
     data = {"is_direct": True}
@@ -75,7 +80,7 @@ if __name__ == '__main__':
         room_id = create_room(u)
         if room_id is not None:
             join_via_invite(
-                room_id=room_id,
+                room=room_id,
                 token=GetUserToken(u).token
             )
         else:
