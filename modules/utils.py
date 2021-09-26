@@ -3,7 +3,7 @@ import json
 
 class Config:
     def __init__(self):
-        with open("../settings.json", "r") as json_file:
+        with open("./settings.json", "r") as json_file:
             json_data = json.load(json_file)
 
         self.api_key = json_data["api_key"]
