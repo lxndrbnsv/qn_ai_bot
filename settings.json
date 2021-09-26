@@ -1,10 +1,11 @@
 {
-  "api_key": "",
+  "api_key": "AI7R3SC7DvSBsP79m7oCfdzUdcKV98GA",
+  "client_id": "qn1042402",
   "ai_id": "AI",
-  "bot_id": "",
-  "bot_password": "",
+  "bot_id": "@test_bot:test.mybusines.app",
+  "bot_password": "test",
   "database_name": "synapse",
   "database_user": "synapse_user",
-  "database_host": "",
-  "database_password": ""
+  "database_host": "95.216.57.29",
+  "database_password": "owee5ooQuai4eira3ewejeighaiy0moo"
 }

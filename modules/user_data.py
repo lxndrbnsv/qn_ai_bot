@@ -1,3 +1,5 @@
+import traceback
+
 import psycopg2
 
 from modules.utils import Config as cfg
@@ -15,14 +17,17 @@ class GetUserToken:
         cursor = connection.cursor()
         try:
             cursor.execute(
-                """SELECT token FROM access_tokens WHERE access_tokens.user_id != %s;""",
+                """SELECT token FROM access_tokens WHERE user_id = %s;""",
                 [user_id])
 
             select_data = cursor.fetchone()
-            self.token = select_data[0]
+            if select_data is not None:
+                self.token = select_data[0]
+            else:
+                self.token = None
 
         except (Exception, psycopg2.Error) as error:
-            print("ERROR! SharedRooms module", flush=True)
+            traceback.print_exc()
             print(error, flush=True)
         finally:
             if connection:

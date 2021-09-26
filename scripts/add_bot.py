@@ -44,9 +44,11 @@ def get_users():
 
 def create_room(user_to_invite):
     url = f"https://test.matrix.mybusines.app/_matrix/client/r0/createRoom"
+    user_token = GetUserToken(cfg().bot_id).token
+    print("Token: ", user_token)
     headers = {
         "headers": "Content-type: application/json",
-        "Authorization": "Bearer " + GetUserToken(cfg().bot_id).token
+        "Authorization": "Bearer " + user_token
     }
     data = {
         "preset": "trusted_private_chat",
@@ -78,10 +80,14 @@ if __name__ == '__main__':
     all_users = get_users()
     for u in all_users:
         room_id = create_room(u)
-        if room_id is not None:
-            join_via_invite(
-                room=room_id,
-                token=GetUserToken(u).token
-            )
+        user_token = GetUserToken(u).token
+        if user_token is not None:
+            if room_id is not None:
+                join_via_invite(
+                    room=room_id,
+                    token=user_token
+                )
+            else:
+                print(room_id)
         else:
-            print(room_id)
+            print("Token is None!\n", "User: ", u)
