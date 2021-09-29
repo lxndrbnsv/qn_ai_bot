@@ -1,12 +1,12 @@
 {
-  "api_key": "AI7R3SC7DvSBsP79m7oCfdzUdcKV98GA",
-  "client_id": "qn1042402",
-  "ai_id": "AI",
-  "bot_id": "@test_bot:test.mybusines.app",
-  "bot_password": "test",
-  "database_name": "synapse",
-  "database_user": "synapse_user",
-  "database_host": "95.216.57.29",
-  "database_password": "owee5ooQuai4eira3ewejeighaiy0moo",
-  "admin_token": "syt_YWNjZXB0X215X3Jvb20_eGsMhOUmYaqwmMXspnsy_3P9w23"
+  "api_key": "",
+  "client_id": "",
+  "ai_id": "",
+  "bot_id": "",
+  "bot_password": "",
+  "database_name": "",
+  "database_user": "",
+  "database_host": "",
+  "database_password": "",
+  "admin_token": ""
 }
