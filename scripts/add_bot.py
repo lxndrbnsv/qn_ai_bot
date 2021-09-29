@@ -65,6 +65,13 @@ def create_room(user_to_invite):
         return None
 
 
+def login_as_user(user_id, admin_token):
+    url = f"https://test.matrix.mybusines.app/_synapse/admin/v1/users/{user_id}/login"
+    auth_header = {"Authorization": f"Bearer {admin_token}"}
+    response = requests.post(url, headers=auth_header)
+    return json.loads(response.text)["access_token"]
+
+
 def join_via_invite(room, token):
     url = (
         f"https://test.matrix.mybusines.app/_matrix/client/r0/"
@@ -80,7 +87,7 @@ if __name__ == '__main__':
     all_users = get_users()
     for u in all_users:
         room_id = create_room(u)
-        user_token = GetUserToken(u).token
+        user_token = login_as_user(u, cfg().admin_token)
         if user_token is not None:
             if room_id is not None:
                 join_via_invite(

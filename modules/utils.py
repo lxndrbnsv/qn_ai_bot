@@ -14,3 +14,4 @@ class Config:
         self.database_user = json_data["database_user"]
         self.database_host = json_data["database_host"]
         self.database_password = json_data["database_password"]
+        self.admin_token = json_data["admin_token"]
