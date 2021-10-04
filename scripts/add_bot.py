@@ -1,6 +1,7 @@
 import sys
 import json
 import time
+import traceback
 
 import psycopg2
 import requests
@@ -110,19 +111,26 @@ def join_via_invite(room, token):
 if __name__ == '__main__':
     all_users = get_users()
     for u in all_users:
-        room_id = create_room(u)
-        send_hello_message(room_id)
+        try:
+            room_id = create_room(u)
+            send_hello_message(room_id)
 
-        time.sleep(1)
+            time.sleep(1)
 
-        user_token = login_as_user(u, cfg().admin_token)
-        if user_token is not None:
-            if room_id is not None:
-                join_via_invite(
-                    room=room_id,
-                    token=user_token
-                )
+            user_token = login_as_user(u, cfg().admin_token)
+            if user_token is not None:
+                if room_id is not None:
+                    join_via_invite(
+                        room=room_id,
+                        token=user_token
+                    )
+                else:
+                    print(room_id)
             else:
-                print(room_id)
-        else:
-            print("Token is None!\n", "User: ", u)
+                print("Token is None!\n", "User: ", u)
+        except Exception:
+            traceback.print_exc()
+            with open("unable_to_add.txt", "a+") as error_file:
+                error_file.write(
+                    f"{u}\n"
+                )
