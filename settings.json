@@ -8,5 +8,6 @@
   "database_user": "",
   "database_host": "",
   "database_password": "",
-  "admin_token": ""
+  "admin_token": "",
+  "matrix_api_url": ""
 }

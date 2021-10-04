@@ -1,5 +1,6 @@
 import sys
 import json
+import time
 
 import psycopg2
 import requests
@@ -8,8 +9,8 @@ from modules.utils import Config as cfg
 from modules.user_data import GetUserToken
 
 
-# sys.stdout = open("./add_bot.log", "w")
-# sys.stderr = open("./add_bot.log", "w")
+sys.stdout = open("./add_bot.log", "w")
+sys.stderr = open("./add_bot.log", "w")
 
 
 def get_users():
@@ -43,12 +44,12 @@ def get_users():
 
 
 def create_room(user_to_invite):
-    url = f"https://test.matrix.mybusines.app/_matrix/client/r0/createRoom"
-    user_token = GetUserToken(cfg().bot_id).token
-    print("Token: ", user_token)
+    url = f"https://{cfg().matrix_api_url}/_matrix/client/r0/createRoom"
+    room_creator_token = GetUserToken(cfg().bot_id).token
+    print("Token: ", room_creator_token)
     headers = {
         "headers": "Content-type: application/json",
-        "Authorization": "Bearer " + user_token
+        "Authorization": "Bearer " + room_creator_token
     }
     data = {
         "preset": "trusted_private_chat",
@@ -80,7 +81,7 @@ def send_hello_message(room_id):
                     " Fragen stellen und mich als persönlichen Assistenten nutzen!"
 
     url = (
-        f"https://test.matrix.mybusines.app/_matrix/client/r0/rooms/"
+        f"https://{cfg().matrix_api_url}/_matrix/client/r0/rooms/"
         f"{room_id}/send/m.room.message?access_token={GetUserToken(cfg().bot_id).token}"
     )
     headers = {"headers": "Content-type: application/json"}
@@ -88,9 +89,8 @@ def send_hello_message(room_id):
     r = requests.post(url=url, headers=headers, json=data)
 
 
-
 def login_as_user(user_id, admin_token):
-    url = f"https://test.matrix.mybusines.app/_synapse/admin/v1/users/{user_id}/login"
+    url = f"https://{cfg().matrix_api_url}/_synapse/admin/v1/users/{user_id}/login"
     auth_header = {"Authorization": f"Bearer {admin_token}"}
     response = requests.post(url, headers=auth_header)
     return json.loads(response.text)["access_token"]
@@ -98,7 +98,7 @@ def login_as_user(user_id, admin_token):
 
 def join_via_invite(room, token):
     url = (
-        f"https://test.matrix.mybusines.app/_matrix/client/r0/"
+        f"https://{cfg().matrix_api_url}/_matrix/client/r0/"
         f"rooms/{room}/join?access_token={token}"
     )
     headers = {"headers": "Content-type: application/json"}
@@ -112,6 +112,9 @@ if __name__ == '__main__':
     for u in all_users:
         room_id = create_room(u)
         send_hello_message(room_id)
+
+        time.sleep(1)
+
         user_token = login_as_user(u, cfg().admin_token)
         if user_token is not None:
             if room_id is not None:
