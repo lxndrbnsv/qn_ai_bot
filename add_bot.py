@@ -7,7 +7,7 @@ import psycopg2
 import requests
 
 from modules.utils import Config as cfg
-from modules.user_data import GetUserToken
+from modules.user_data import GetUserToken, GetTokenHolder
 
 
 # sys.stdout = open("./add_bot.log", "w")
@@ -121,8 +121,6 @@ def join_via_invite(room, token):
 #     "@qn1042402:m.mybusines.app"
 # ]
 USERS_BL = []
-
-
 
 if __name__ == '__main__':
     all_users = get_users()
