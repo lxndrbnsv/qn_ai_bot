@@ -1,9 +1,10 @@
+import datetime
 import json
 import sys
 import asyncio
 
 import requests
-from nio import AsyncClient, MatrixRoom, RoomMessageText
+from nio import AsyncClient, MatrixRoom, RoomMessageText, SyncResponse
 
 from modules.utils import Config as cfg
 from modules.user_data import GetUserToken
@@ -11,6 +12,9 @@ from modules.user_data import GetUserToken
 
 # sys.stdout = open("./test_bot.log", "w")
 # sys.stderr = open("./test_bot.log", "w")
+
+
+start_time = int(str(round(datetime.datetime.now().timestamp(), 3)).replace(".", ""))
 
 
 async def send_room_message(message, room_id):
@@ -40,7 +44,10 @@ async def get_ai_response(message, sender):
 
     r = requests.post(url, data=payload)
     print("Response results: ", r, r.text)
-    return json.loads(r.text)[1]
+    try:
+        return json.loads(r.text)[1]
+    except IndexError:
+        pass
 
 
 async def message_handler(room: MatrixRoom, event: RoomMessageText) -> None:
@@ -49,11 +56,26 @@ async def message_handler(room: MatrixRoom, event: RoomMessageText) -> None:
         f"{room.user_name(event.sender)} | {event.body}"
     )
     if event.sender != cfg().bot_id:
-        sender_id = event.sender
-        msg_body = event.body
+        event_server_timestamp = event.server_timestamp
+        if event_server_timestamp >= start_time:
+            print("--- --- ---")
+            print(
+                "Current timestamp: ",
+                round(
+                    datetime.datetime.now().timestamp(),
+                    3
+                )
+            )
+            print("Event: ", event.server_timestamp)
+            print("Start: ", start_time)
+            print(event)
 
-        ai_response = await get_ai_response(msg_body, sender_id)
-        await send_room_message(ai_response, room.room_id)
+            print("--- --- ---")
+            sender_id = event.sender
+            msg_body = event.body
+
+            ai_response = await get_ai_response(msg_body, sender_id)
+            await send_room_message(ai_response, room.room_id)
 
 
 async def main() -> None:
@@ -69,3 +91,4 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(main())
+

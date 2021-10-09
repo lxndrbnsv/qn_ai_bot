@@ -10,8 +10,8 @@ from modules.utils import Config as cfg
 from modules.user_data import GetUserToken
 
 
-sys.stdout = open("./add_bot.log", "w")
-sys.stderr = open("./add_bot.log", "w")
+# sys.stdout = open("./add_bot.log", "w")
+# sys.stderr = open("./add_bot.log", "w")
 
 
 def get_users():
@@ -45,7 +45,7 @@ def get_users():
 
 
 def create_room(user_to_invite):
-    url = f"https://{cfg().matrix_api_url}/_matrix/client/r0/createRoom"
+    url = f"{cfg().matrix_api_url}/_matrix/client/r0/createRoom"
     room_creator_token = GetUserToken(cfg().bot_id).token
     print("Token: ", room_creator_token)
     headers = {
@@ -82,7 +82,7 @@ def send_hello_message(room_id):
                     " Fragen stellen und mich als persönlichen Assistenten nutzen!"
 
     url = (
-        f"https://{cfg().matrix_api_url}/_matrix/client/r0/rooms/"
+        f"{cfg().matrix_api_url}/_matrix/client/r0/rooms/"
         f"{room_id}/send/m.room.message?access_token={GetUserToken(cfg().bot_id).token}"
     )
     headers = {"headers": "Content-type: application/json"}
@@ -91,7 +91,7 @@ def send_hello_message(room_id):
 
 
 def login_as_user(user_id, admin_token):
-    url = f"https://{cfg().matrix_api_url}/_synapse/admin/v1/users/{user_id}/login"
+    url = f"{cfg().matrix_api_url}/_synapse/admin/v1/users/{user_id}/login"
     auth_header = {"Authorization": f"Bearer {admin_token}"}
     response = requests.post(url, headers=auth_header)
     return json.loads(response.text)["access_token"]
@@ -99,7 +99,7 @@ def login_as_user(user_id, admin_token):
 
 def join_via_invite(room, token):
     url = (
-        f"https://{cfg().matrix_api_url}/_matrix/client/r0/"
+        f"{cfg().matrix_api_url}/_matrix/client/r0/"
         f"rooms/{room}/join?access_token={token}"
     )
     headers = {"headers": "Content-type: application/json"}
@@ -108,18 +108,20 @@ def join_via_invite(room, token):
     return json.loads(r.text)
 
 
-USERS_BL = [
-    "@qn18:m.mybusines.app",
-    "@qn1037668:m.mybusines.app,"
-    "@qn1043177:m.mybusines.app",
-    "@qn1041178:m.mybusines.app",
-    "@qn1043178:m.mybusines.app",
-    "@qn1036770:m.mybusines.app",
-    "@qn1043176:m.mybusines.app",
-    "@qn1043179:m.mybusines.app",
-    "@qn20444:m.mybusines.app",
-    "@qn1042402:m.mybusines.app"
-]
+# USERS_BL = [
+#     "@qn18:m.mybusines.app",
+#     "@qn1037668:m.mybusines.app,"
+#     "@qn1043177:m.mybusines.app",
+#     "@qn1041178:m.mybusines.app",
+#     "@qn1043178:m.mybusines.app",
+#     "@qn1036770:m.mybusines.app",
+#     "@qn1043176:m.mybusines.app",
+#     "@qn1043179:m.mybusines.app",
+#     "@qn20444:m.mybusines.app",
+#     "@qn1042402:m.mybusines.app"
+# ]
+USERS_BL = []
+
 
 
 if __name__ == '__main__':

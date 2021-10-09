@@ -30,5 +30,5 @@ def get_ai_response(message):
 
 
 if __name__ == "__main__":
-    msg = "🍰"
+    msg = "А так? )))"
     print(get_ai_response(msg))
