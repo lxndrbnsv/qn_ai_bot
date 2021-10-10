@@ -46,7 +46,7 @@ def get_users():
 
 def create_room(user_to_invite):
     url = f"{cfg().matrix_api_url}/_matrix/client/r0/createRoom"
-    room_creator_token = GetUserToken(cfg().bot_id).token
+    room_creator_token = bot_token
     print("Token: ", room_creator_token)
     headers = {
         "headers": "Content-type: application/json",
@@ -83,7 +83,7 @@ def send_hello_message(room_id):
 
     url = (
         f"{cfg().matrix_api_url}/_matrix/client/r0/rooms/"
-        f"{room_id}/send/m.room.message?access_token={GetUserToken(cfg().bot_id).token}"
+        f"{room_id}/send/m.room.message?access_token={bot_token}"
     )
     headers = {"headers": "Content-type: application/json"}
     data = {"msgtype": "m.direct", "body": hello_message}
@@ -108,6 +108,55 @@ def join_via_invite(room, token):
     return json.loads(r.text)
 
 
+
+def login():
+    bot_id = cfg().bot_id
+    login_url = f"{cfg().matrix_api_url}/_matrix/client/r0/login"
+    data = dict(
+        type="m.login.password",
+        identifier=dict(
+            type="m.id.user",
+            user=bot_id
+        ),
+        password=cfg().bot_password,
+        initial_device_display_name="QN API"
+    )
+    r = requests.post(login_url, json=data)
+
+    return json.loads(r.text)["access_token"]
+
+
+
+def generate_users_bl():
+    users = []
+    connection = psycopg2.connect(
+        user=cfg().database_user,
+        password=cfg().database_password,
+        host=cfg().database_host,
+        database=cfg().database_name,
+    )
+
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+            """SELECT other_user_id FROM users_who_share_private_rooms WHERE user_id = %s;""",
+            [cfg().bot_id])
+
+        select_data = cursor.fetchall()
+        for s in select_data:
+            if s[0] not in users:
+                users.append(s[0])
+
+    except (Exception, psycopg2.Error) as error:
+        print("ERROR! SharedRooms module", flush=True)
+        print(error, flush=True)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+
+    return users
+
 # USERS_BL = [
 #     "@qn18:m.mybusines.app",
 #     "@qn1037668:m.mybusines.app,"
@@ -120,32 +169,36 @@ def join_via_invite(room, token):
 #     "@qn20444:m.mybusines.app",
 #     "@qn1042402:m.mybusines.app"
 # ]
-USERS_BL = []
+# USERS_BL = []
+USERS_BL = generate_users_bl()
 
 if __name__ == '__main__':
-    all_users = get_users()
-    for u in all_users:
-        try:
-            if u not in USERS_BL:
-                room_id = create_room(u)
-                send_hello_message(room_id)
-
-                time.sleep(1)
-
-                user_token = login_as_user(u, cfg().admin_token)
-                if user_token is not None:
-                    if room_id is not None:
-                        join_via_invite(
-                            room=room_id,
-                            token=user_token
-                        )
-                    else:
-                        print(room_id)
-                else:
-                    print("Token is None!\n", "User: ", u)
-        except Exception:
-            traceback.print_exc()
-            with open("unable_to_add.txt", "a+") as error_file:
-                error_file.write(
-                    f"{u}\n"
-                )
+    for u in USERS_BL:
+        print(u)
+    # bot_token = login()
+    # all_users = get_users()
+    # for u in all_users:
+    #     try:
+    #         if u not in USERS_BL:
+    #             room_id = create_room(u)
+    #             send_hello_message(room_id)
+    #
+    #             time.sleep(1)
+    #
+    #             user_token = login_as_user(u, bot_token)
+    #             if user_token is not None:
+    #                 if room_id is not None:
+    #                     join_via_invite(
+    #                         room=room_id,
+    #                         token=user_token
+    #                     )
+    #                 else:
+    #                     print(room_id)
+    #             else:
+    #                 print("Token is None!\n", "User: ", u)
+    #     except Exception:
+    #         traceback.print_exc()
+    #         with open("unable_to_add.txt", "a+") as error_file:
+    #             error_file.write(
+    #                 f"{u}\n"
+    #             )
