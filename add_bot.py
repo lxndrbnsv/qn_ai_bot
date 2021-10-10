@@ -170,35 +170,35 @@ def generate_users_bl():
 #     "@qn1042402:m.mybusines.app"
 # ]
 # USERS_BL = []
-USERS_BL = generate_users_bl()
+USERS_BL = generate_users_bl() # Users who already have a chet with AI.
 
 if __name__ == '__main__':
-    for u in USERS_BL:
-        print(u)
-    # bot_token = login()
-    # all_users = get_users()
-    # for u in all_users:
-    #     try:
-    #         if u not in USERS_BL:
-    #             room_id = create_room(u)
-    #             send_hello_message(room_id)
-    #
-    #             time.sleep(1)
-    #
-    #             user_token = login_as_user(u, bot_token)
-    #             if user_token is not None:
-    #                 if room_id is not None:
-    #                     join_via_invite(
-    #                         room=room_id,
-    #                         token=user_token
-    #                     )
-    #                 else:
-    #                     print(room_id)
-    #             else:
-    #                 print("Token is None!\n", "User: ", u)
-    #     except Exception:
-    #         traceback.print_exc()
-    #         with open("unable_to_add.txt", "a+") as error_file:
-    #             error_file.write(
-    #                 f"{u}\n"
-    #             )
+    # for u in USERS_BL:
+    #     print(u)
+    bot_token = login()
+    all_users = get_users()
+    for u in all_users:
+        try:
+            if u not in USERS_BL:
+                room_id = create_room(u)
+                send_hello_message(room_id)
+
+                time.sleep(1)
+
+                user_token = login_as_user(u, bot_token)
+                if user_token is not None:
+                    if room_id is not None:
+                        join_via_invite(
+                            room=room_id,
+                            token=user_token
+                        )
+                    else:
+                        print(room_id)
+                else:
+                    print("Token is None!\n", "User: ", u)
+        except Exception:
+            traceback.print_exc()
+            with open("unable_to_add.txt", "a+") as error_file:
+                error_file.write(
+                    f"{u}\n"
+                )
