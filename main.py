@@ -69,11 +69,11 @@ async def main() -> None:
     client = AsyncClient(
         cfg().matrix_api_url, cfg().bot_id
     )
-    client.add_event_callback(message_handler, RoomMessageText)
+    # client.add_event_callback(message_handler, RoomMessageText)
 
     print(await client.login(cfg().bot_password), flush=True)
 
-    await client.sync_forever(timeout=30000)  # milliseconds
+    await client.sync_forever(timeout=300000)  # milliseconds
 
 
 if __name__ == "__main__":
